@@ -1,0 +1,197 @@
+\documentclass{report}
+\usepackage[utf8]{inputenc}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{titling}
+\usepackage{tikz}
+\usepackage{lipsum}
+\usepackage{xcolor}
+\usepackage{tocloft}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage[english]{babel}
+\usepackage[autostyle]{csquotes}
+\usepackage[rightcaption]{sidecap}
+\usepackage{verbatim}
+\usepackage[backend=bibtex]{biblatex}
+\usepackage [ a4paper , hmargin =1 in , bottom =1.5 in ] { geometry }
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+\bibliography{report}
+
+\graphicspath{{./images/iitb_symbol.png}{./images/google_form1.png}{./images/google_form2.png}}
+\graphicspath{{./images/doctors_TRB.png}{../images/doctors_GNB.png}{./images/doctors_BNB.png}{./images/doctors_MGB.png}{./images/doctors_BVB.png}{./images/sheet1.png}{./images/sheet2.png}{./images/function_selection.png}}
+\graphicspath{{./images/extensions.png}{./images/execution.png}{./images/problem.png}}
+
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+
+\renewcommand{\maketitle}{
+  \begin{titlepage}
+    \begin{center}
+      \includegraphics[width=8cm]{iitb_symbol.png}
+      \vspace{2cm}
+      
+      \Huge\textbf{CS104 - Systems Software Lab Project Report}
+      
+      \vspace{2cm}
+      
+      \Large\textbf{Token Generation System}
+      
+      \vspace{2cm}
+      
+      \Large\textbf{Anumalasetty Varshith \\ 22b0907 }
+      
+      \vfill
+      
+      \Large\textbf{Spring Semester 2022 - 23}
+    \end{center}
+  \end{titlepage}
+}
+
+
+\begin{document}
+\begin{titlepage}
+  \maketitle
+\end{titlepage}
+
+\pagenumbering{roman}
+\tableofcontents
+
+\clearpage
+
+\pagenumbering{arabic}
+
+\chapter{Project Outline}
+\section{Small Brief}
+This report presents the design and implementation of an appointment system for Varshith Hospital. The goal of the system is to efficiently manage appointments and send confirmation emails to patients. The appointment system is a web-based application developed using Google Apps Script, which integrates with Google Sheets and Gmail. \\ \\
+
+The appointment system is designed to handle appointments for three different
+locations and three different doctors. It allows patients to request appointments
+by filling out an online form. The system then assigns a time slot to the patient
+based on availability and sends them a confirmation email with a unique token
+number. The system also generates a list of appointments in a Google Sheets
+document for easy reference by hospital staff.
+
+
+\section{Emphasizing Customization}
+\begin{itemize}
+    \item Made it \texttt{Location Specific}
+    \item Made it \texttt{Gender Specific}
+    \item Made it \texttt{Combained gender with location specific}
+    \item Made it \texttt{Doctor specific}
+    \item Brought \texttt{Tokenwise Patient list} organised in new sheet
+    \item Took reason to visit for hospital and made it \texttt{Available for Doctors}
+\end{itemize}
+
+
+\chapter{Information gathering}
+\section{Google form}
+This project is about assigning tokens to a form filler and sending emails to them. The tokens here are for \textbf{Varshith Group Of Hospitals} (it is my name :). First it starts with filling a google form - \href{https://docs.google.com/forms/d/e/1FAIpQLSchUr83psJBTp3G_Mh1Mi20ATDMxm-hGJr-776OOu7rAujDtg/viewform?usp=sf_link}{Appointment booking} of Varshith Hospitals. In that basic details such as name, gender, age etc are taken. Next it asks for \enquote{branch location} in which appointment is required as shown in \ref{fig1} and \ref{fig2}.
+\begin{figure}[h]
+    \centering
+    \subfloat[\centering Screenshot 1]{{\includegraphics[width=0.48\textwidth]{google_form1.png}}\label{fig1}}%
+    \hfill
+    \subfloat[\centering Screenshot 2]{{\includegraphics[width=0.48\textwidth]{google_form2.png}}\label{fig2}}%
+    \caption{Screenshots of Googleform}
+    \label{fig:gf}
+\end{figure}
+
+Later it goes to a section containing list of doctors based on their selection of branch location as shown in \ref{fig:doctots_list} .Then takes the problem of patient in optional way .That's it the form gets submitted.
+\begin{figure}
+    \centering
+    \subfloat[\centering doctors at TR branch]{{\includegraphics[width=0.48\textwidth]{doctors/doctors_TRB.png}}\label{fig3}}%
+    \hfill
+    \subfloat[\centering doctors at GN branch]{{\includegraphics[width=0.48\textwidth]{doctors/doctors_GNB.png}}\label{fig4}}%
+    \hfill
+    \subfloat[\centering doctors at BN branch]{{\includegraphics[width=0.48\textwidth]{doctors/doctors_BNB.png}}\label{fig5}}%
+    \hfill
+    \subfloat[\centering doctors at MG branch]{{\includegraphics[width=0.48\textwidth]{doctors/doctors_MGB.png}}\label{fig6}}%
+    \hfill
+    \subfloat[\centering doctors at BV branch]{{\includegraphics[width=0.48\textwidth]{doctors/doctors_BVB.png}}\label{fig7}}%
+    \hfill
+    \subfloat[\centering problem taking]{{\includegraphics[width=0.48\textwidth]{problem.png}}\label{fig21}}%
+    \caption{list of doctors at each location}
+    \label{fig:doctots_list}
+\end{figure}
+
+\section{Google sheet}
+This information obtained from Googleform is gathered into GoogleSheet \textbf{Project Token System} in \enquote{Form Responses} sheet. It appears as shown in figure \ref{fig:gs} .The main thing to notice is that information regarding doctors at different locations are collected at different columns.
+
+\begin{figure}[h]
+    \centering
+    \subfloat[\centering Screenshot 1]{{\includegraphics[width=0.8\textwidth]{doctors/sheet1.png}}\label{fig8}}%
+    \hfill
+    \subfloat[\centering Screenshot 2]{{\includegraphics[width=0.8\textwidth]{doctors/sheet2.png}}\label{fig9}}%
+    \caption{Screenshots of Googlesheet}
+    \label{fig:gs}
+\end{figure}
+
+\chapter{Code execution}
+To get the functionality follow the steps described below
+\begin{enumerate}
+    \item First open the googlesheet with information about form fillers.
+    \item Then select \enquote{\textbf{Extensions}} and select \enquote{\textbf{Apps Script}} as shown in below figure \ref{fig:ext} .
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width = 0.7\textwidth]{extensions.png}
+        \caption{Screenshot of Googlesheet}
+        \label{fig:ext}
+    \end{figure}
+    \item Find Javascript code in \textbf{code-folder} folder in \textbf{22b0907\textunderscore project} folder. Then paste the code which is in \enquote{.js} file.
+    \item Select the \enquote{\textbf{token\textunderscore system}} in the functions list as shown in \ref{fig:fs} .
+    \item Then click \enquote{\textbf{Run}} button shown in below figure \ref{fig:fs} to execute the code.
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width = 0.6\textwidth]{function_selection.png}
+        \caption{Screenshot of Apps Script}
+        \label{fig:fs}
+    \end{figure}
+    \item The two lines as \enquote{\textbf{Execution started}} and \enquote{\textbf{Execution completed}} in Execution log confirms the successful execution.
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width = 0.6\textwidth]{execution.png}
+        \caption{Screenshot of Execution log}
+        \label{fig:ex}
+    \end{figure}
+    \item This completes the execution of the code.
+\end{enumerate}
+
+\chapter{Code description}
+\section{Implementation Details}
+The appointment system is implemented using several functions in Google Apps Script. The main function, \texttt{token\_system}, serves as the entry point and manage the different steps involved in the appointment process. Here are the key functions used:
+
+\begin{itemize}
+    \item \texttt{aggregate\_location}: This function reads the appointment data from the Google Sheets document and separates it into corresponding arrays based on location and doctor names. This allows for efficient organization and processing of the appointments.
+    \item \texttt{aggregate\_gender}: Similar to \texttt{aggregate\_location}, this function additionally separates the appointment data based on the gender of the patients. This can be useful for generating reports or statistics based on gender demographics.
+    \item \texttt{de\_duplicator\_location}: This function removes any duplicate entries for the same person at a given branch. It ensures that each patient is assigned only one appointment slot, avoiding any confusion or duplication.
+    \item \texttt{de\_duplicator\_gender}: Similar to \texttt{de\_duplicator\_location}, this function removes duplicate entries for the same person at a given branch and gender. It helps maintain fairness and avoids bias in appointment assignments.
+    \item \texttt{email\_sender\_location}: This function sends appointment confirmation emails to patients based on their selected location. It retrieves the patient's email address from the Google Sheets document and uses Gmail services to send personalized emails containing the appointment details.
+    \item \texttt{email\_sender\_gender}: Similar to \texttt{email\_sender\_location}, this function sends appointment confirmation emails based on location and gender. It allows for personalized communication and ensures that patients receive relevant information.
+    \item \texttt{token\_list\_location}: This function generates the appointment list in the Google Sheets document, specifically in the "Slots" sheet. It writes the patient's name, appointment date and time, doctor's name, and token number in an organized manner for easy reference by hospital staff.
+    \item \texttt{token\_list\_gender}: Similar to \texttt{token\_list\_location}, this function generates the appointment list based on location and gender. It provides a more granular view of the appointments, enabling analysis based on gender-specific trends or patterns.
+\end{itemize}
+
+\chapter{References}
+\begin{itemize}
+    \item I have used the reference \cite{googleappsscriptemail} given in problem statement to get familiarise with Google Apps Script API.
+    
+    \item Then the references \cite{googlesheetsapi} and \cite{spreadsheetemail} which were also given in problem statement to automated Gmail sending mechanism using Apps Script. But used \cite{spreadsheetemail} for the final project
+
+    \item Used \cite{url1} to learn about Javascript arrays
+
+    \item Used stackoverflow very much for syntax errors but mentioning one of reference \cite{url2} used to add data to google sheet using Apps Script.
+\end{itemize}
+
+\printbibliography
+
+\end{document}
